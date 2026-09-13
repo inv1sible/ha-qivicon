@@ -1,4 +1,4 @@
-# QIVICON for Home Assistant 0.4.0
+# QIVICON for Home Assistant 0.5.0
 
 Experimental local Home Assistant integration for the QIVICON Home Base 2 / Aurora firmware.
 
@@ -13,7 +13,19 @@ The integration logs in to the Home Base with its **device password**, extracts 
 - Automatic re-login when the API rejects an expired session
 - Local polling every 30 seconds
 
-The tested Home Base returned 40 devices, 326 items and 17 rooms. Of the 326 items, 72 are structural groups. State-bearing capabilities are mapped to Home Assistant entities, with related light and thermostat channels combined. Thermostat target/current temperature metadata was present. One discovered EUROtronic thermostat was offline, so an actual temperature change has not yet been validated.
+## Known supported devices
+
+The following devices have been identified from a real Home Base inventory.
+Their availability and values naturally depend on the Home Base seeing them online.
+
+- Signify Netherlands B.V. `dimmable_light`: a single light with brightness.
+- Lidl/Livarno Lux `TS0502A` (`_TZ3000_49qchf10`): a tunable-white light with brightness and colour-temperature controls.
+- Tuya `extended_color_light` (`_TZ3000_odygigth`): a full-colour light with brightness, colour picker and colour-temperature controls.
+- Sercomm `DT_ESW02_001`: a DECT outdoor plug exposed as a switch.
+- eQ-3 `HMIP-PSM`: a Homematic IP switching and metering plug. Its primary switch, energy measurements and communication error are exposed; virtual channels, schedules and profile controls are omitted.
+- EUROtronic `DT_HKR_461_03_RF_460_03`: heating thermostat with measured and target temperature. It was offline in the inspected inventory, so write commands remain unverified.
+- EUROtronic `DT_DWS_458_04`: four-action wall switch. Its battery state is exposed; use event capture to identify its transient button events before device triggers can be added.
+- Huawei/Silabs `EM3587 EZSP SPI`: the internal Zigbee coordinator. It exposes status, firmware and communication timestamps as diagnostics. The six frame-counter items are omitted because the Home Base reports them as `NULL`.
 
 ## Install with HACS
 
@@ -49,6 +61,7 @@ The password is stored in the Home Assistant config entry, as is customary for l
 - Writable date/time items become datetime entities.
 - A controllable temperature item paired with a measured temperature item becomes a climate entity.
 - Offline QIVICON devices make their entities unavailable.
+- Infrastructure counters and known internal Homematic IP channels are suppressed so they do not clutter the device page.
 
 Every entity exposes the raw item name, type, tags, writable flag, range, step and options as state attributes. This keeps newly encountered capabilities inspectable even before a specialized Home Assistant mapping exists.
 

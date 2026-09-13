@@ -22,7 +22,11 @@ def item_is_writable(item: dict[str, Any]) -> bool:
     """Return whether QIVICON advertises an item as writable."""
     tags = item.get("tags") or []
     description = item.get("stateDescription") or {}
-    return "capability:control" in tags or description.get("readOnly") is False
+    return (
+        "capability:control" in tags
+        or "capability:switchable" in tags
+        or description.get("readOnly") is False
+    )
 
 
 def item_device_id(
@@ -44,6 +48,44 @@ def item_device_id(
             if group_item and (uid := thing_uid_from_item(group_item)):
                 return uid
     return thing_uid_from_item(item)
+
+
+def item_device(
+    item: dict[str, Any],
+    devices: list[dict[str, Any]],
+    all_items: list[dict[str, Any]] | None = None,
+) -> dict[str, Any] | None:
+    """Return the QIVICON device that owns an item, if known."""
+    device_id = item_device_id(item, devices, all_items)
+    return next((device for device in devices if device.get("id") == device_id), None)
+
+
+def item_is_visible(
+    item: dict[str, Any],
+    devices: list[dict[str, Any]],
+    all_items: list[dict[str, Any]] | None = None,
+) -> bool:
+    """Hide infrastructure counters and known internal Homematic channels.
+
+    The raw item inventory exposes a large number of implementation channels.
+    They are not useful Home Assistant controls and, in several cases, are
+    permanently NULL.  Keep the actual switch, measurements and communication
+    error from HMIP-PSM plugs while omitting their virtual schedules/profiles.
+    """
+    device = item_device(item, devices, all_items)
+    if not device:
+        return True
+    if device.get("isBridge"):
+        return False
+    if (device.get("detail") or {}).get("model") != "HMIP-PSM":
+        return True
+    tags = set(item.get("tags") or [])
+    return (
+        "capability:switchable" in tags
+        or "capability:measurement" in tags
+        or "capability:signalStrength" in tags
+        or item.get("name", "").endswith("_00_UNREACH")
+    )
 
 
 class QiviconEntity(CoordinatorEntity[QiviconCoordinator]):

@@ -7,7 +7,7 @@ from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from . import QiviconConfigEntry
 from .const import NULL_STATES
-from .entity import QiviconEntity, item_device_id, item_is_writable
+from .entity import QiviconEntity, item_device_id, item_is_visible, item_is_writable
 
 
 async def async_setup_entry(
@@ -18,7 +18,12 @@ async def async_setup_entry(
     for item in coordinator.data.items:
         options = (item.get("stateDescription") or {}).get("options") or []
         values = [str(option.get("value")) for option in options if option.get("value")]
-        if item.get("type") != "String" or not item_is_writable(item) or not values:
+        if (
+            item.get("type") != "String"
+            or not item_is_writable(item)
+            or not item_is_visible(item, coordinator.data.devices, coordinator.data.items)
+            or not values
+        ):
             continue
         entities.append(
             QiviconSelect(

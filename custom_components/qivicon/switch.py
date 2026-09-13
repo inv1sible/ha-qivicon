@@ -7,7 +7,7 @@ from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from . import QiviconConfigEntry
 from .const import NULL_STATES
-from .entity import QiviconEntity, item_device_id, item_is_writable
+from .entity import QiviconEntity, item_device_id, item_is_visible, item_is_writable
 
 
 async def async_setup_entry(
@@ -18,7 +18,9 @@ async def async_setup_entry(
     for item in coordinator.data.items:
         if item.get("type") != "Switch":
             continue
-        if not item_is_writable(item):
+        if not item_is_writable(item) or not item_is_visible(
+            item, coordinator.data.devices, coordinator.data.items
+        ):
             continue
         entities.append(
             QiviconSwitch(
@@ -33,6 +35,11 @@ async def async_setup_entry(
 class QiviconSwitch(QiviconEntity, SwitchEntity):
     @property
     def name(self) -> str:
+        if (
+            (self.device or {}).get("detail", {}).get("model") == "HMIP-PSM"
+            and "capability:switchable" in (self.item.get("tags") or [])
+        ):
+            return "Power"
         return self.item.get("label") or self.item_name
 
     @property

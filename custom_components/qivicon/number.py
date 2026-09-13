@@ -9,7 +9,7 @@ from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from . import QiviconConfigEntry
 from .const import NULL_STATES
-from .entity import QiviconEntity, item_device_id, item_is_writable
+from .entity import QiviconEntity, item_device_id, item_is_visible, item_is_writable
 
 
 async def async_setup_entry(
@@ -22,7 +22,12 @@ async def async_setup_entry(
         tags = item.get("tags") or []
         is_temperature = "property:temperature" in tags
         # All writable Dimmer items are exposed by the light platform.
-        if not item_is_writable(item) or is_temperature or item_type == "Dimmer":
+        if (
+            not item_is_writable(item)
+            or not item_is_visible(item, coordinator.data.devices, coordinator.data.items)
+            or is_temperature
+            or item_type == "Dimmer"
+        ):
             continue
         if not item_type.startswith("Number"):
             continue

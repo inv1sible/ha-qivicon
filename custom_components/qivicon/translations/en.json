@@ -18,5 +18,15 @@
     "abort": {
       "already_configured": "This Home Base is already configured"
     }
+  },
+  "entity": {
+    "sensor": {
+      "status": {
+        "name": "Status"
+      },
+      "firmware": {
+        "name": "Firmware"
+      }
+    }
   }
 }
