@@ -16,12 +16,9 @@ async def async_setup_entry(
     coordinator = entry.runtime_data
     entities = []
     for item in coordinator.data.items:
-        if item.get("type") != "Dimmer":
-            continue
-        text = f"{item.get('name', '')} {item.get('label', '')}".lower()
-        if not item_is_writable(item) or not (
-            "brightness" in text or "helligkeit" in text
-        ):
+        # QIVICON/openHAB uses Dimmer for writable 0-100 brightness channels.
+        # Vendor-specific labels frequently omit "brightness" or "Helligkeit".
+        if item.get("type") != "Dimmer" or not item_is_writable(item):
             continue
         entities.append(
             QiviconLight(

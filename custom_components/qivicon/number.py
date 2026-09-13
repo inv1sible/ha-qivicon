@@ -21,13 +21,10 @@ async def async_setup_entry(
         item_type = item.get("type") or ""
         tags = item.get("tags") or []
         is_temperature = "property:temperature" in tags
-        text = f"{item.get('name', '')} {item.get('label', '')}".lower()
-        is_brightness = item_type == "Dimmer" and (
-            "brightness" in text or "helligkeit" in text
-        )
-        if not item_is_writable(item) or is_temperature or is_brightness:
+        # All writable Dimmer items are exposed by the light platform.
+        if not item_is_writable(item) or is_temperature or item_type == "Dimmer":
             continue
-        if not (item_type.startswith("Number") or item_type == "Dimmer"):
+        if not item_type.startswith("Number"):
             continue
         entities.append(
             QiviconNumber(

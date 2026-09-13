@@ -1,4 +1,4 @@
-# QIVICON for Home Assistant 0.2.1
+# QIVICON for Home Assistant 0.2.2
 
 Experimental local Home Assistant integration for the QIVICON Home Base 2 / Aurora firmware.
 
