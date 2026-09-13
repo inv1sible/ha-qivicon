@@ -1,0 +1,24 @@
+send_item_command:
+  name: Send item command
+  description: Send a raw command to any QIVICON item. Use the qivicon_item attribute to identify the target.
+  fields:
+    item:
+      name: Item
+      description: Exact QIVICON item name.
+      required: true
+      example: hue_0100_001788a6e2c1_4_brightness
+      selector:
+        text:
+    command:
+      name: Command
+      description: Raw command accepted by the QIVICON item.
+      required: true
+      example: "25"
+      selector:
+        text:
+    entry_id:
+      name: Config entry ID
+      description: Required only when more than one QIVICON Home Base is configured.
+      required: false
+      selector:
+        text:

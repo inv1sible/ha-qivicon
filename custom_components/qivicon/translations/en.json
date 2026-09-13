@@ -1,0 +1,22 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to QIVICON",
+        "description": "Enter the Home Base IP address and the device password printed on its label.",
+        "data": {
+          "host": "Host or IP address",
+          "password": "Device password"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Could not connect to the Home Base",
+      "invalid_auth": "The device password was rejected",
+      "unknown": "Unexpected error"
+    },
+    "abort": {
+      "already_configured": "This Home Base is already configured"
+    }
+  }
+}

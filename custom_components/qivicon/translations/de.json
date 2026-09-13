@@ -1,0 +1,22 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Mit QIVICON verbinden",
+        "description": "IP-Adresse der Home Base und das Gerätepasswort vom Typenschild eingeben.",
+        "data": {
+          "host": "Host oder IP-Adresse",
+          "password": "Gerätepasswort"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Verbindung zur Home Base fehlgeschlagen",
+      "invalid_auth": "Das Gerätepasswort wurde abgelehnt",
+      "unknown": "Unerwarteter Fehler"
+    },
+    "abort": {
+      "already_configured": "Diese Home Base ist bereits eingerichtet"
+    }
+  }
+}
