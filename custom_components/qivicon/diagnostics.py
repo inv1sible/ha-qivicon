@@ -20,4 +20,5 @@ async def async_get_config_entry_diagnostics(
         "devices": snapshot.devices,
         "items": snapshot.items,
         "rooms": snapshot.rooms,
+        "event_capture": entry.runtime_data.event_capture.diagnostics(),
     }

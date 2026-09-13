@@ -1,4 +1,4 @@
-# QIVICON for Home Assistant 0.2.2
+# QIVICON for Home Assistant 0.3.0
 
 Experimental local Home Assistant integration for the QIVICON Home Base 2 / Aurora firmware.
 
@@ -53,6 +53,22 @@ Every entity exposes the raw item name, type, tags, writable flag, range, step a
 The `qivicon.send_item_command` service can send a raw command to any item by its exact `qivicon_item` attribute. It is intended as an escape hatch for capabilities that do not yet have a specialized entity.
 
 Home Assistant's **Download diagnostics** action exports the complete non-secret system, room, device and item inventory. Access tokens, cookies and the device password are never included.
+
+## Capture button and other transient events
+
+The normal inventory cannot contain momentary button presses. To record the raw
+QIVICON event stream for device analysis:
+
+1. Open **Developer tools → Actions** in Home Assistant.
+2. Run `qivicon.start_event_capture` with a duration from 10 to 600 seconds
+   (120 seconds by default).
+3. Operate the buttons or sensors that need analysis during that period.
+4. Wait until the duration has elapsed, or run `qivicon.stop_event_capture`.
+5. Download the QIVICON integration diagnostics and inspect `event_capture`.
+
+The capture retains at most 500 events in memory and is cleared whenever a new
+capture starts or Home Assistant restarts. Credential-like fields are redacted
+before they enter the diagnostic buffer.
 
 ## Experimental command support
 

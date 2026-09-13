@@ -216,6 +216,20 @@ class QiviconClient:
         except (TypeError, json.JSONDecodeError):
             return response_body
 
+    async def rpc_call(self, method: str, params: list[Any]) -> Any:
+        """Call a QIVICON JSON-RPC method directly."""
+        self._rpc_id += 1
+        reply = (await self._rpc([{
+            "jsonrpc": "2.0",
+            "method": method,
+            "id": f"ha-{self._rpc_id}",
+            "params": params,
+            "options": "confidential",
+        }]))[0]
+        if error := reply.get("error"):
+            raise QiviconError(error.get("message", str(error)))
+        return reply.get("result")
+
     async def get_snapshot(self) -> QiviconSnapshot:
         """Fetch all shared integration data."""
         paths = (
