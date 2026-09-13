@@ -1,4 +1,4 @@
-# QIVICON for Home Assistant 0.3.0
+# QIVICON for Home Assistant 0.4.0
 
 Experimental local Home Assistant integration for the QIVICON Home Base 2 / Aurora firmware.
 
@@ -13,7 +13,7 @@ The integration logs in to the Home Base with its **device password**, extracts 
 - Automatic re-login when the API rejects an expired session
 - Local polling every 30 seconds
 
-The tested Home Base returned 40 devices, 326 items and 17 rooms. Of the 326 items, 72 are structural groups and all 254 state-bearing items are mapped to Home Assistant entities. Thermostat target/current temperature metadata was present. One discovered EUROtronic thermostat was offline, so an actual temperature change has not yet been validated.
+The tested Home Base returned 40 devices, 326 items and 17 rooms. Of the 326 items, 72 are structural groups. State-bearing capabilities are mapped to Home Assistant entities, with related light and thermostat channels combined. Thermostat target/current temperature metadata was present. One discovered EUROtronic thermostat was offline, so an actual temperature change has not yet been validated.
 
 ## Install with HACS
 
@@ -40,10 +40,12 @@ The password is stored in the Home Assistant config entry, as is customary for l
 - Read-only numeric/string items become sensors.
 - Read-only switch/contact items become binary sensors.
 - Writable switch items tagged as controls become switches.
-- Writable dimmer items become brightness lights.
-- Other writable numeric/dimmer items become number entities with the advertised range and step.
+- Writable light channels belonging to the same device are combined into one
+  light entity with brightness, color-temperature and HS color controls as
+  advertised by QIVICON.
+- Other writable numeric items become number entities with the advertised range and step.
 - Writable strings with advertised values become select entities.
-- Other writable strings and raw HSB color values become text entities.
+- Other writable strings become text entities.
 - Writable date/time items become datetime entities.
 - A controllable temperature item paired with a measured temperature item becomes a climate entity.
 - Offline QIVICON devices make their entities unavailable.

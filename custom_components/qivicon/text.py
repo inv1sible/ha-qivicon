@@ -17,7 +17,7 @@ async def async_setup_entry(
     entities = []
     for item in coordinator.data.items:
         options = (item.get("stateDescription") or {}).get("options") or []
-        if item.get("type") not in ("String", "Color"):
+        if item.get("type") != "String":
             continue
         if not item_is_writable(item) or options:
             continue
