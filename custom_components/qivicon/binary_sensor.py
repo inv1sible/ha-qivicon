@@ -35,6 +35,11 @@ async def async_setup_entry(
 class QiviconBinarySensor(QiviconEntity, BinarySensorEntity):
     @property
     def name(self) -> str:
+        if (
+            (self.device or {}).get("detail", {}).get("model") == "HM-Sec-SCo"
+            and "capability:openState" in (self.item.get("tags") or [])
+        ):
+            return "Door"
         return self.item.get("label") or self.item_name
 
     @property
@@ -46,6 +51,11 @@ class QiviconBinarySensor(QiviconEntity, BinarySensorEntity):
 
     @property
     def device_class(self):
+        if (
+            (self.device or {}).get("detail", {}).get("model") == "HM-Sec-SCo"
+            and "capability:openState" in (self.item.get("tags") or [])
+        ):
+            return BinarySensorDeviceClass.DOOR
         text = f"{self.item.get('category', '')} {self.item.get('label', '')}".lower()
         if "window" in text or "fenster" in text:
             return BinarySensorDeviceClass.WINDOW

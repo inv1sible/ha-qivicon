@@ -34,20 +34,31 @@ def item_device_id(
     devices: list[dict[str, Any]],
     all_items: list[dict[str, Any]] | None = None,
 ) -> str | None:
-    groups = set(item.get("groupNames") or [])
-    for device in devices:
-        device_group = device["id"].replace(":", "_").replace("-", "_")
-        if device_group in groups:
-            return device["id"]
-    if all_items:
-        for group in groups:
-            group_item = next(
-                (candidate for candidate in all_items if candidate.get("name") == group),
-                None,
-            )
-            if group_item and (uid := thing_uid_from_item(group_item)):
-                return uid
-    return thing_uid_from_item(item)
+    """Resolve an item to its device through all nested QIVICON groups."""
+    device_groups = {
+        device["id"].replace(":", "_").replace("-", "_"): device["id"]
+        for device in devices
+    }
+    items_by_name = {
+        candidate["name"]: candidate
+        for candidate in all_items or []
+        if candidate.get("name")
+    }
+
+    def resolve(candidate: dict[str, Any], seen: set[str]) -> str | None:
+        if uid := thing_uid_from_item(candidate):
+            return uid
+        for group in candidate.get("groupNames") or []:
+            if device_id := device_groups.get(group):
+                return device_id
+            if group in seen:
+                continue
+            if parent := items_by_name.get(group):
+                if device_id := resolve(parent, seen | {group}):
+                    return device_id
+        return None
+
+    return resolve(item, {item.get("name", "")})
 
 
 def item_device(
@@ -77,7 +88,18 @@ def item_is_visible(
         return True
     if device.get("isBridge"):
         return False
-    if (device.get("detail") or {}).get("model") != "HMIP-PSM":
+    model = (device.get("detail") or {}).get("model")
+    if model == "HM-Sec-SCo":
+        tags = set(item.get("tags") or [])
+        return bool(
+            {
+                "capability:openState",
+                "capability:lowBattery",
+                "capability:tamper",
+            }
+            & tags
+        )
+    if model != "HMIP-PSM":
         return True
     tags = set(item.get("tags") or [])
     return (

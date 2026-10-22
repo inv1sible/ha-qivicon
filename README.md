@@ -1,4 +1,4 @@
-# QIVICON for Home Assistant 0.5.0
+# QIVICON for Home Assistant 0.5.1
 
 Experimental local Home Assistant integration for the QIVICON Home Base 2 / Aurora firmware.
 
@@ -23,6 +23,7 @@ Their availability and values naturally depend on the Home Base seeing them onli
 - Tuya `extended_color_light` (`_TZ3000_odygigth`): a full-colour light with brightness, colour picker and colour-temperature controls.
 - Sercomm `DT_ESW02_001`: a DECT outdoor plug exposed as a switch.
 - eQ-3 `HMIP-PSM`: a Homematic IP switching and metering plug. Its primary switch, energy measurements and communication error are exposed; virtual channels, schedules and profile controls are omitted.
+- EQ3 `HM-Sec-SCo`: a HomeMatic shutter/door contact, mapped as a Door binary sensor with battery and tamper diagnostics.
 - EUROtronic `DT_HKR_461_03_RF_460_03`: heating thermostat with measured and target temperature. It was offline in the inspected inventory, so write commands remain unverified.
 - EUROtronic `DT_DWS_458_04`: four-action wall switch. Its battery state is exposed; use event capture to identify its transient button events before device triggers can be added.
 - Huawei/Silabs `EM3587 EZSP SPI`: the internal Zigbee coordinator. It exposes status, firmware and communication timestamps as diagnostics. The six frame-counter items are omitted because the Home Base reports them as `NULL`.
