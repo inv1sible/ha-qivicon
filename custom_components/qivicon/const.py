@@ -2,8 +2,6 @@
 
 DOMAIN = "qivicon"
 
-DEFAULT_SCAN_INTERVAL = 30
-
 PLATFORMS = [
     "binary_sensor",
     "climate",

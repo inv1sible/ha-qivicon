@@ -1,4 +1,4 @@
-# QIVICON for Home Assistant 0.5.1
+# QIVICON for Home Assistant 0.6.0
 
 Experimental local Home Assistant integration for the QIVICON Home Base 2 / Aurora firmware.
 
@@ -11,7 +11,8 @@ The integration logs in to the Home Base with its **device password**, extracts 
 - Authenticated JSON-RPC at `/remote/json-rpc`
 - System, rooms, devices and openHAB-style item inventory
 - Automatic re-login when the API rejects an expired session
-- Local polling every 30 seconds
+- Experimental event-driven updates through QIVICON remote events
+- Automatic event-subscription recovery after a connection or authentication error
 
 ## Known supported devices
 
@@ -70,6 +71,20 @@ The `qivicon.send_item_command` service can send a raw command to any item by it
 
 Home Assistant's **Download diagnostics** action exports the complete non-secret system, room, device and item inventory. Access tokens, cookies and the device password are never included.
 
+It also contains `transport`, with the event-subscription status, last event,
+last snapshot refresh, reconnect count and non-secret error details. No
+additional diagnostic entities or states are created in Home Assistant.
+
+## Experimental live updates
+
+Version 0.6.0 replaces the regular 30-second polling interval with a persistent
+QIVICON event subscription. The integration loads a complete snapshot on startup
+and after a recovered subscription; ordinary updates are triggered by events and
+are briefly combined to avoid duplicate refreshes. Every available device type
+should be live-tested before this mechanism is relied upon for automations.
+
+See [CHANGELOG.md](CHANGELOG.md) for the release notes.
+
 ## Capture button and other transient events
 
 The normal inventory cannot contain momentary button presses. To record the raw
@@ -92,6 +107,6 @@ Switch, light and thermostat commands use the openHAB-style item command route t
 
 ## Development status
 
-This is an experimental custom integration distributed through a HACS custom repository. Event/WebSocket updates, options, reauthentication UI, richer color-light mappings and automated Home Assistant runtime tests remain future work.
+This is an experimental custom integration distributed through a HACS custom repository. Options, reauthentication UI, richer color-light mappings and automated Home Assistant runtime tests remain future work.
 
 The API approach follows the authentication and JSON-RPC structure described in Luca Glockow's 2017 bachelor thesis, *Sicherheitsanalyse einer Smarthome-Zentrale*, updated by inspecting the current Aurora frontend.
